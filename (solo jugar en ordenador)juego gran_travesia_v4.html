@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Gran Travesía</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&family=Outfit:wght@300;400;500&display=swap');
+
+:root{
+  --ink:#16130e;--sand:#f2ede4;--sand2:#e8e1d4;--sand3:#ddd6cc;
+  --teal:#0d6b52;--teal-l:#c8e8df;--teal-m:#4ecfa0;
+  --amber:#b8720f;--amber-l:#faefd8;
+  --coral:#b03a22;--coral-l:#f5e2dc;
+  --sky:#1a5f8a;--sky-l:#d8eaf6;
+  --red:#991a1a;--red-l:#fce8e8;
+  --purple:#5c3d8f;--purple-l:#ede8f8;
+  --muted:#6b6358;--border:#d4cdc2;--white:#fdfcf9;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--sand);color:var(--ink);min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{background:var(--ink);color:var(--sand);padding:.875rem 1.5rem;display:none;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:1rem}
+.hdr-title{font-family:'Fraunces',serif;font-size:14px;letter-spacing:.02em;white-space:nowrap}
+.pips{display:flex;gap:4px;align-items:center}
+.pip{width:18px;height:3px;border-radius:2px;background:rgba(242,237,228,.2);transition:background .4s}
+.pip.done{background:var(--teal-m)}.pip.now{background:var(--sand)}
+.pip-label{font-size:11px;color:rgba(242,237,228,.4);white-space:nowrap;margin-left:6px}
+
+/* ── SCENES ── */
+.scene{display:none}
+.scene.active{display:block;animation:rise .4s ease}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════ COVER ══════════════ */
+.cover{min-height:100vh;display:grid;grid-template-columns:1fr 420px;background:var(--ink);overflow:hidden;position:relative}
+@media(max-width:768px){.cover{grid-template-columns:1fr;grid-template-rows:auto 280px}}
+.cover-left{display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem 4rem 4rem;position:relative;z-index:2}
+@media(max-width:768px){.cover-left{padding:3rem 1.5rem 2rem}}
+.cover-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:2rem}
+.cover-dot{width:8px;height:8px;border-radius:50%;background:var(--teal-m)}
+.cover-eyebrow-text{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(242,237,228,.5)}
+.cover-h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(52px,7vw,88px);line-height:.95;color:var(--sand);margin-bottom:.5rem}
+.cover-h1 .accent{color:var(--teal-m);font-style:italic;display:block}
+.cover-rule{width:48px;height:2px;background:var(--teal-m);margin:1.75rem 0}
+.cover-desc{font-size:clamp(15px,2vw,18px);color:rgba(242,237,228,.6);font-weight:300;line-height:1.65;max-width:400px;margin-bottom:2.5rem}
+.cover-chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:2.5rem}
+.chip{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;background:rgba(242,237,228,.08);color:rgba(242,237,228,.5);border:1px solid rgba(242,237,228,.12);letter-spacing:.04em}
+.cover-cta{display:inline-flex;align-items:center;gap:10px;background:var(--teal-m);color:var(--ink);border:none;border-radius:var(--r);padding:1rem 2rem;font-family:'Outfit',sans-serif;font-size:16px;font-weight:500;cursor:pointer;transition:transform .15s,background .2s;letter-spacing:.01em}
+.cover-cta:hover{background:#6eddb5;transform:translateY(-2px)}
+.cover-cta-arrow{font-size:18px;transition:transform .2s}
+.cover-cta:hover .cover-cta-arrow{transform:translateX(4px)}
+
+/* Cover right — character mosaic */
+.cover-right{position:relative;overflow:hidden}
+@media(max-width:768px){.cover-right{height:280px}}
+.cover-mosaic{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px}
+.mosaic-cell{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+.mosaic-cell svg{position:absolute;bottom:0}
+.mosaic-overlay{position:absolute;bottom:0;left:0;right:0;padding:.5rem .75rem;background:linear-gradient(transparent,rgba(22,19,14,.7));font-size:10px;font-weight:500;color:rgba(242,237,228,.8);letter-spacing:.06em;text-transform:uppercase}
+.m1{background:linear-gradient(160deg,#1a3d2e,#0d2218)}
+.m2{background:linear-gradient(160deg,#2d1f0a,#1a1206)}
+.m3{background:linear-gradient(160deg,#3d1a1a,#2a1010)}
+.m4{background:linear-gradient(160deg,#1a2a3d,#0e1a2a)}
+
+/* Cover bottom bar */
+.cover-bottom{position:absolute;bottom:0;left:0;right:50%;padding:1.25rem 4rem;display:flex;gap:2rem;border-top:1px solid rgba(242,237,228,.08)}
+@media(max-width:768px){.cover-bottom{left:0;right:0;padding:1rem 1.5rem;position:relative}}
+.cover-stat{font-size:12px;color:rgba(242,237,228,.35)}
+.cover-stat strong{display:block;font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--teal-m)}
+
+/* ── WRAP ── */
+.wrap{max-width:640px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+
+/* ── TYPE ── */
+.act-tag{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem}
+.sc-title{font-family:'Fraunces',serif;font-size:clamp(24px,5vw,38px);font-weight:600;line-height:1.15;color:var(--ink);margin-bottom:1.375rem}
+.sc-title em{font-style:italic;color:var(--teal)}
+.body{font-size:15px;line-height:1.8;color:var(--ink);font-weight:300;margin-bottom:1rem}
+.body strong{font-weight:500}
+.body em{color:var(--muted);font-style:italic}
+.muted{color:var(--muted)}
+
+/* ── CHAR PORTRAIT CARD ── */
+.char-full{display:grid;grid-template-columns:165px 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);background:var(--white);margin:1.375rem 0}
+@media(max-width:500px){.char-full{grid-template-columns:1fr}}
+.char-portrait{display:flex;align-items:flex-end;justify-content:center;padding-top:1.5rem;min-height:200px}
+.char-info{padding:1.25rem 1.375rem}
+.char-name-big{font-family:'Fraunces',serif;font-size:19px;font-weight:600;line-height:1.2;margin-bottom:.2rem}
+.char-origin{font-size:11px;color:var(--muted);margin-bottom:.75rem;letter-spacing:.01em}
+.char-bio{font-size:13px;line-height:1.7;color:var(--muted);font-weight:300}
+.char-bio em{font-style:italic;color:var(--ink)}
+.char-tag{display:inline-block;font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;letter-spacing:.05em;margin-bottom:.5rem}
+.tag-teal{background:var(--teal-l);color:var(--teal)}
+.tag-amber{background:var(--amber-l);color:var(--amber)}
+.tag-coral{background:var(--coral-l);color:var(--coral)}
+.tag-sky{background:var(--sky-l);color:var(--sky)}
+.tag-red{background:var(--red-l);color:var(--red)}
+.tag-purple{background:var(--purple-l);color:var(--purple)}
+
+/* ── CHAR GRID ── */
+.char-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1.375rem 0}
+@media(max-width:500px){.char-grid{grid-template-columns:1fr 1fr}}
+.char-mini{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);background:var(--white);transition:transform .2s,box-shadow .2s}
+.char-mini:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(22,19,14,.08)}
+.char-mini-portrait{height:130px;display:flex;align-items:flex-end;justify-content:center;padding-top:1rem}
+.char-mini-info{padding:.75rem .875rem}
+.char-mini-name{font-family:'Fraunces',serif;font-size:14px;font-weight:600;margin-bottom:2px}
+.char-mini-sub{font-size:11px;color:var(--muted);font-weight:300;line-height:1.4}
+
+/* ── DATA ── */
+.stat-row{display:flex;gap:10px;margin:1.25rem 0;flex-wrap:wrap}
+.stat-card{flex:1;min-width:120px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:.875rem 1rem}
+.stat-num{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--teal);line-height:1}
+.stat-desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4;font-weight:300}
+.stat-src{font-size:10px;color:var(--border);margin-top:5px;font-style:italic}
+
+.data-box{border-left:4px solid var(--teal);background:var(--teal-l);border-radius:0 var(--r) var(--r) 0;padding:1.125rem 1.375rem;margin:1.25rem 0}
+.data-box .db-stat{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--teal);display:block;line-height:1;margin-bottom:3px}
+.data-box .db-text{font-size:13px;color:var(--ink);line-height:1.6;font-weight:300}
+.data-box .db-src{font-size:10px;color:var(--muted);margin-top:8px;display:block;font-style:italic}
+.data-box-amber{border-left-color:var(--amber);background:var(--amber-l)}.data-box-amber .db-stat{color:var(--amber)}
+.data-box-coral{border-left-color:var(--coral);background:var(--coral-l)}.data-box-coral .db-stat{color:var(--coral)}
+.data-box-red{border-left-color:var(--red);background:var(--red-l)}.data-box-red .db-stat{color:var(--red)}
+
+/* ── QUOTE ── */
+.quote-box{display:flex;gap:12px;padding:1.125rem 1.25rem;background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin:1.25rem 0}
+.qmark{font-family:'Fraunces',serif;font-size:42px;line-height:1;color:var(--border);flex-shrink:0;margin-top:-6px}
+.q-who{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px}
+.q-text{font-size:14px;line-height:1.65;color:var(--ink);font-weight:300}
+
+/* ── CHOICES ── */
+.q-label{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:1.75rem 0 .875rem}
+.choices{display:flex;flex-direction:column;gap:10px}
+.cbtn{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.125rem 1.25rem;text-align:left;cursor:pointer;font-family:'Outfit',sans-serif;color:var(--ink);line-height:1.5;transition:border-color .2s,background .2s,transform .12s;width:100%}
+.cbtn:hover{border-color:var(--teal);background:var(--teal-l);transform:translateX(4px)}
+.cbtn:active{transform:translateX(2px)}
+.cbtn .ct{font-size:15px;font-weight:500;display:block;margin-bottom:3px}
+.cbtn .cd{font-size:12px;color:var(--muted);display:block;font-weight:300}
+
+/* ── FEEDBACK ── */
+.fb-card{border-radius:var(--r);overflow:hidden;margin:1.5rem 0;border:1px solid var(--border)}
+.fb-head{display:flex;gap:14px;align-items:center;padding:1.125rem 1.25rem}
+.fb-icon{font-size:22px;flex-shrink:0}
+.fb-who{font-size:11px;color:var(--muted);margin-bottom:2px}
+.fb-headline{font-size:15px;font-weight:500;color:var(--ink);line-height:1.35}
+.fb-body{padding:1rem 1.25rem;font-size:13px;line-height:1.75;color:var(--muted);font-weight:300;border-top:1px solid var(--border)}
+.fb-body strong{font-weight:500;color:var(--ink)}
+.fb-g{background:var(--teal-l)}.fb-g .fb-head{background:#b4ddd5}
+.fb-r{background:var(--coral-l)}.fb-r .fb-head{background:#e6c0b8}
+.fb-n{background:var(--amber-l)}.fb-n .fb-head{background:#f0d8a8}
+.fb-red{background:var(--red-l)}.fb-red .fb-head{background:#f0c0c0}
+
+/* ── NO-VE BOX ── */
+.no-ve-box{background:var(--sand2);border:1px solid var(--border);border-radius:var(--r);padding:1.125rem 1.375rem;margin:1.25rem 0}
+.no-ve-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.no-ve-text{font-size:14px;line-height:1.7;color:var(--ink);font-weight:300}
+
+/* ── VOICE ── */
+.voice-cards{display:flex;flex-direction:column;gap:10px;margin:1.25rem 0}
+.voice{display:flex;gap:12px;padding:1rem 1.125rem;background:var(--white);border:1px solid var(--border);border-radius:var(--r)}
+.v-ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px}
+.v-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.v-quote{font-size:13px;color:var(--muted);line-height:1.55;font-weight:300}
+
+/* ── DILEMMA ── */
+.dilem-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin:2rem 0 .5rem;color:var(--ink)}
+.dilem-intro{font-size:14px;color:var(--muted);line-height:1.7;font-weight:300;margin-bottom:1.125rem}
+.dilem{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.125rem}
+.dc{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center;transition:border-color .3s,background .3s}
+.dc.hl{border-color:var(--teal);background:var(--teal-l)}
+.dc.hl-r{border-color:var(--coral);background:var(--coral-l)}
+.dc-lbl{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.3;font-weight:300}
+.dc-val{font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin-bottom:4px}
+.dc-sub{font-size:11px;color:var(--muted);line-height:1.4;font-weight:300}
+.c-g{color:var(--teal)}.c-r{color:var(--coral)}.c-n{color:var(--muted)}.c-red{color:var(--red)}
+.dilem-tw{font-size:13px;line-height:1.7;color:var(--muted);font-weight:300;padding:.875rem 1.125rem;background:var(--sand2);border-radius:var(--r);margin-bottom:1.5rem}
+.dilem-tw strong{font-weight:500;color:var(--ink)}
+
+/* ── FAKE NEWS VISUAL ── */
+.fake-post{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:1.25rem 0}
+.fake-post-header{background:#1877f2;padding:.75rem 1rem;display:flex;align-items:center;gap:10px}
+.fake-post-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:14px}
+.fake-post-name{font-size:13px;color:white;font-weight:500}
+.fake-post-body{padding:1rem 1.125rem}
+.fake-post-text{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:.75rem;font-weight:300}
+.fake-post-img{background:var(--sand2);border-radius:8px;padding:1rem;text-align:center;font-size:12px;color:var(--muted);font-style:italic;margin-bottom:.75rem}
+.fake-post-stats{font-size:11px;color:var(--muted);display:flex;gap:1rem}
+.fact-check{background:var(--red-l);border-left:3px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:.875rem 1.125rem;margin-top:.75rem}
+.fc-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:.375rem}
+.fc-text{font-size:13px;color:var(--ink);line-height:1.6;font-weight:300}
+.fc-src{font-size:10px;color:var(--muted);margin-top:5px;font-style:italic}
+
+/* ── ISOTYPE SIM ── */
+.iso-wrap{margin:1.25rem 0}
+.iso-section{margin-bottom:1.25rem}
+.iso-label{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:.5rem;display:flex;align-items:center;gap:8px}
+.iso-label .iso-count{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink)}
+.iso-grid{display:flex;flex-wrap:wrap;gap:4px;min-height:40px;padding:.5rem;background:var(--white);border-radius:var(--r);border:1px solid var(--border)}
+.iso-person{width:20px;height:24px;transition:opacity .4s}
+.iso-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1.25rem}
+.iso-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.iso-legend-swatch{width:14px;height:14px;border-radius:3px}
+
+/* gauges */
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1.25rem 0}
+.gauge-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center;position:relative;overflow:hidden}
+.gauge-bar-bg{position:absolute;bottom:0;left:0;right:0;background:var(--sand2);height:4px}
+.gauge-bar-fill{position:absolute;bottom:0;left:0;height:4px;border-radius:0 2px 2px 0;transition:width .5s ease}
+.gauge-val{font-family:'Fraunces',serif;font-size:26px;font-weight:600;display:block}
+.gauge-label{font-size:11px;color:var(--muted);margin-top:3px;font-weight:300}
+.gauge-trend{font-size:11px;margin-top:4px;font-weight:400}
+
+.sliders{margin:1.25rem 0}
+.sl-row{display:flex;align-items:center;gap:10px;margin-bottom:.875rem}
+.sl-row label{font-size:13px;color:var(--muted);min-width:130px;font-weight:300}
+.sl-row input[type=range]{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;background:var(--border);outline:none;cursor:pointer}
+.sl-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--teal);cursor:pointer;transition:transform .15s}
+.sl-row input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
+.sl-val{font-size:13px;font-weight:500;min-width:34px;text-align:right}
+.sim-note{font-size:14px;color:var(--muted);line-height:1.7;padding:.875rem 1.125rem;background:var(--sand2);border-radius:var(--r);margin:.875rem 0;font-style:italic;font-weight:300}
+
+/* ── NEXT ── */
+.nbtn{margin-top:1.75rem;display:inline-block;background:var(--ink);color:var(--sand);border:none;border-radius:var(--r);padding:.875rem 1.75rem;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s,transform .1s;letter-spacing:.01em}
+.nbtn:hover{background:var(--teal);transform:translateY(-2px)}
+.nbtn:active{transform:translateY(0)}
+
+/* ── VERDICT ── */
+.verdict{background:var(--ink);color:var(--sand);border-radius:var(--r);padding:1.75rem;margin:1.5rem 0}
+.vt{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:.75rem}
+.vb{font-size:14px;line-height:1.8;color:rgba(242,237,228,.75);font-weight:300}
+.ftable{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:1.25rem 0}
+.frow{display:flex;justify-content:space-between;align-items:baseline;padding:.75rem 1.125rem;border-bottom:1px solid var(--border);font-size:13px}
+.frow:last-child{border-bottom:none}
+.fk{color:var(--muted);font-weight:300}.fv{font-weight:500}
+.pill{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin:3px 3px 3px 0}
+.pill-g{background:var(--teal-l);color:var(--teal)}
+.pill-r{background:var(--coral-l);color:var(--coral)}
+.pill-n{background:var(--sand2);color:var(--muted)}
+.credits{border-top:1px solid var(--border);margin-top:2.5rem;padding-top:1.5rem;font-size:12px;color:var(--muted);line-height:1.7;font-weight:300}
+.divider{border:none;border-top:1px solid var(--border);margin:2rem 0}
+</style>
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <span class="hdr-title">La Gran Travesía</span>
+  <div class="pips" id="pips-wrap"></div>
+  <span class="pip-label" id="pip-txt"></span>
+</header>
+
+<!-- ══════════════════════════════ PORTADA ══════════════════════════════ -->
+<div class="scene active" id="s-cover">
+<div class="cover">
+  <!-- LEFT -->
+  <div class="cover-left">
+    <div class="cover-eyebrow">
+      <div class="cover-dot"></div>
+      <span class="cover-eyebrow-text">Juego interactivo · España, 2024</span>
+    </div>
+    <div class="cover-h1">La Gran<span class="accent">Travesía</span></div>
+    <div class="cover-rule"></div>
+    <div class="cover-desc">Seis personas, una ciudad. Sus decisiones — y las tuyas — construyen o rompen una comunidad.</div>
+    <div class="cover-chips">
+      <span class="chip">⏱ 25–30 min</span>
+      <span class="chip">◈ 5 actos</span>
+      <span class="chip">✦ Datos reales</span>
+      <span class="chip">6 personajes</span>
+    </div>
+    <button class="cover-cta" onclick="go('s0')">
+      Comenzar la historia
+      <span class="cover-cta-arrow">→</span>
+    </button>
+    <div class="cover-bottom" style="position:relative;padding:1.5rem 0 0;display:flex;gap:2rem;border-top:1px solid rgba(242,237,228,.08);margin-top:2rem">
+      <div class="cover-stat"><strong>15,4%</strong>de la población española nació fuera del país</div>
+      <div class="cover-stat"><strong>+89B€</strong>aportación migrante al PIB anual</div>
+    </div>
+  </div>
+  <!-- RIGHT — character mosaic -->
+  <div class="cover-right">
+    <div class="cover-mosaic">
+      <div class="mosaic-cell m1">
+        <svg viewBox="0 0 100 140" width="80" height="112">
+          <ellipse cx="50" cy="48" rx="24" ry="26" fill="#8B6348"/>
+          <ellipse cx="50" cy="30" rx="26" ry="16" fill="#2d1a0e"/>
+          <ellipse cx="30" cy="44" rx="7" ry="18" fill="#2d1a0e"/>
+          <ellipse cx="70" cy="44" rx="7" ry="18" fill="#2d1a0e"/>
+          <ellipse cx="50" cy="50" rx="20" ry="22" fill="#8B6348"/>
+          <ellipse cx="42" cy="46" rx="3" ry="2.5" fill="#1a0e06"/><ellipse cx="58" cy="46" rx="3" ry="2.5" fill="#1a0e06"/>
+          <ellipse cx="41.5" cy="45.5" rx=".8" ry=".7" fill="white"/><ellipse cx="57.5" cy="45.5" rx=".8" ry=".7" fill="white"/>
+          <path d="M44,56 Q50,61 56,56" stroke="#6b4530" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="43" y="69" width="14" height="10" rx="3" fill="#8B6348"/>
+          <path d="M10,140 Q10,92 50,86 Q90,92 90,140Z" fill="#0d6b52"/>
+        </svg>
+        <div class="mosaic-overlay">Amara</div>
+      </div>
+      <div class="mosaic-cell m2">
+        <svg viewBox="0 0 100 140" width="80" height="112">
+          <ellipse cx="50" cy="48" rx="24" ry="26" fill="#c8906a"/>
+          <ellipse cx="50" cy="30" rx="26" ry="13" fill="#7a7870"/>
+          <ellipse cx="28" cy="42" rx="6" ry="14" fill="#7a7870"/>
+          <ellipse cx="72" cy="42" rx="6" ry="14" fill="#7a7870"/>
+          <ellipse cx="50" cy="50" rx="20" ry="22" fill="#c8906a"/>
+          <ellipse cx="50" cy="57" rx="7" ry="3" fill="#6a6460"/>
+          <ellipse cx="42" cy="46" rx="3" ry="2.5" fill="#3d2b1a"/><ellipse cx="58" cy="46" rx="3" ry="2.5" fill="#3d2b1a"/>
+          <rect x="26" y="22" width="48" height="6" rx="3" fill="#8a6030"/>
+          <rect x="43" y="69" width="14" height="10" rx="3" fill="#c8906a"/>
+          <path d="M10,140 Q10,92 50,86 Q90,92 90,140Z" fill="#5a7a40"/>
+        </svg>
+        <div class="mosaic-overlay">Paco</div>
+      </div>
+      <div class="mosaic-cell m3">
+        <svg viewBox="0 0 100 140" width="80" height="112">
+          <ellipse cx="50" cy="48" rx="22" ry="24" fill="#c06038"/>
+          <ellipse cx="50" cy="30" rx="22" ry="12" fill="#3a1a08"/>
+          <ellipse cx="30" cy="42" rx="6" ry="16" fill="#3a1a08"/>
+          <ellipse cx="70" cy="42" rx="6" ry="16" fill="#3a1a08"/>
+          <ellipse cx="50" cy="50" rx="18" ry="20" fill="#c06038"/>
+          <ellipse cx="42" cy="46" rx="3" ry="2.5" fill="#1a0800"/><ellipse cx="58" cy="46" rx="3" ry="2.5" fill="#1a0800"/>
+          <path d="M44,57 Q50,61 56,57" stroke="#8a3818" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="43" y="67" width="14" height="10" rx="3" fill="#c06038"/>
+          <path d="M8,140 Q8,90 50,84 Q92,90 92,140Z" fill="#8a2a10"/>
+        </svg>
+        <div class="mosaic-overlay">Familia Gómez</div>
+      </div>
+      <div class="mosaic-cell m4">
+        <svg viewBox="0 0 100 140" width="80" height="112">
+          <ellipse cx="50" cy="48" rx="24" ry="26" fill="#d4a080"/>
+          <ellipse cx="50" cy="28" rx="24" ry="14" fill="#5a3018"/>
+          <ellipse cx="30" cy="42" rx="6" ry="18" fill="#5a3018"/>
+          <ellipse cx="70" cy="42" rx="6" ry="18" fill="#5a3018"/>
+          <ellipse cx="50" cy="50" rx="20" ry="22" fill="#d4a080"/>
+          <ellipse cx="42" cy="46" rx="3" ry="2.5" fill="#2a1a08"/><ellipse cx="58" cy="46" rx="3" ry="2.5" fill="#2a1a08"/>
+          <rect x="36" y="46" width="11" height="7" rx="2.5" stroke="#4a3020" stroke-width="1" fill="none"/>
+          <rect x="53" y="46" width="11" height="7" rx="2.5" stroke="#4a3020" stroke-width="1" fill="none"/>
+          <rect x="43" y="69" width="14" height="10" rx="3" fill="#d4a080"/>
+          <path d="M8,140 Q8,90 50,84 Q92,90 92,140Z" fill="#b03a22"/>
+        </svg>
+        <div class="mosaic-overlay">Elena</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ S0: INTRO DATOS ══ -->
+<div class="scene" id="s0">
+<div class="wrap">
+  <div class="act-tag">España hoy</div>
+  <div class="sc-title">Un país que se mueve</div>
+  <p class="body">Las noticias rara vez muestran lo que hay detrás de los números. <em>Este juego sí.</em> Primavera de 2024. Murcia, 460.000 habitantes, 17% nacidos fuera de España.</p>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num">15,4%</div><div class="stat-desc">de la población española nació fuera del país — 7,3 millones de personas</div><div class="stat-src">INE 2023</div></div>
+    <div class="stat-card"><div class="stat-num">728K</div><div class="stat-desc">personas inmigraron en 2023 — cifra récord de la última década</div><div class="stat-src">INE 2023</div></div>
+    <div class="stat-card"><div class="stat-num">+89B€</div><div class="stat-desc">aportación anual al PIB español de la población migrante</div><div class="stat-src">BdE 2022</div></div>
+  </div>
+  <button class="nbtn" onclick="go('s1')">Conocer a los protagonistas →</button>
+</div>
+</div>
+
+<!-- ══ S1: PERSONAJES ══ -->
+<div class="scene" id="s1">
+<div class="wrap">
+  <div class="act-tag">Los protagonistas</div>
+  <div class="sc-title">Seis personas,<em> una ciudad</em></div>
+  <p class="body muted">Sus decisiones — y las tuyas — determinarán lo que ocurre.</p>
+  <div class="char-grid">
+    <!-- Amara -->
+    <div class="char-mini">
+      <div class="char-mini-portrait" style="background:linear-gradient(160deg,#c8e8df,#e0f2ec)">
+        <svg viewBox="0 0 100 130" width="70" height="91">
+          <ellipse cx="50" cy="44" rx="22" ry="24" fill="#8B6348"/>
+          <ellipse cx="50" cy="28" rx="23" ry="15" fill="#2d1a0e"/>
+          <ellipse cx="31" cy="40" rx="6" ry="17" fill="#2d1a0e"/>
+          <ellipse cx="69" cy="40" rx="6" ry="17" fill="#2d1a0e"/>
+          <ellipse cx="50" cy="46" rx="18" ry="20" fill="#8B6348"/>
+          <ellipse cx="42" cy="42" rx="3" ry="2.5" fill="#1a0e06"/><ellipse cx="58" cy="42" rx="3" ry="2.5" fill="#1a0e06"/>
+          <ellipse cx="41.5" cy="41.5" rx=".8" ry=".7" fill="white"/><ellipse cx="57.5" cy="41.5" rx=".8" ry=".7" fill="white"/>
+          <path d="M44,53 Q50,57 56,53" stroke="#6b4530" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="42" y="63" width="16" height="11" rx="3" fill="#8B6348"/>
+          <path d="M8,130 Q8,88 50,82 Q92,88 92,130Z" fill="#0d6b52"/>
+        </svg>
+      </div>
+      <div class="char-mini-info"><span class="char-tag tag-teal">Senegal</span><div class="char-mini-name">Amara, 31</div><div class="char-mini-sub">Ingeniera agrícola · 8 meses en España</div></div>
+    </div>
+    <!-- Paco -->
+    <div class="char-mini">
+      <div class="char-mini-portrait" style="background:linear-gradient(160deg,#faefd8,#f5e4b8)">
+        <svg viewBox="0 0 100 130" width="70" height="91">
+          <ellipse cx="50" cy="44" rx="22" ry="24" fill="#c8906a"/>
+          <ellipse cx="50" cy="28" rx="23" ry="12" fill="#7a7870"/>
+          <ellipse cx="29" cy="40" rx="6" ry="13" fill="#7a7870"/>
+          <ellipse cx="71" cy="40" rx="6" ry="13" fill="#7a7870"/>
+          <ellipse cx="50" cy="46" rx="18" ry="20" fill="#c8906a"/>
+          <ellipse cx="50" cy="54" rx="6" ry="3" fill="#6a6460"/>
+          <ellipse cx="42" cy="43" rx="2.5" ry="2" fill="#3d2b1a"/><ellipse cx="58" cy="43" rx="2.5" ry="2" fill="#3d2b1a"/>
+          <rect x="24" y="20" width="52" height="5" rx="2.5" fill="#7a5020"/>
+          <rect x="42" y="63" width="16" height="11" rx="3" fill="#c8906a"/>
+          <path d="M8,130 Q8,88 50,82 Q92,88 92,130Z" fill="#5a7a40"/>
+        </svg>
+      </div>
+      <div class="char-mini-info"><span class="char-tag tag-amber">Murcia</span><div class="char-mini-name">Paco, 58</div><div class="char-mini-sub">Agricultor · 40 ha de pimiento</div></div>
+    </div>
+    <!-- Elena -->
+    <div class="char-mini">
+      <div class="char-mini-portrait" style="background:linear-gradient(160deg,#f5e2dc,#f0d4cc)">
+        <svg viewBox="0 0 100 130" width="70" height="91">
+          <ellipse cx="50" cy="44" rx="22" ry="24" fill="#d4a882"/>
+          <ellipse cx="50" cy="27" rx="22" ry="13" fill="#3d2010"/>
+          <ellipse cx="31" cy="40" rx="6" ry="18" fill="#3d2010"/>
+          <ellipse cx="69" cy="40" rx="6" ry="18" fill="#3d2010"/>
+          <ellipse cx="50" cy="46" rx="18" ry="20" fill="#d4a882"/>
+          <rect x="36" y="40" width="10" height="7" rx="2.5" stroke="#4a3820" stroke-width="1" fill="none"/>
+          <rect x="54" y="40" width="10" height="7" rx="2.5" stroke="#4a3820" stroke-width="1" fill="none"/>
+          <line x1="46" y1="43.5" x2="54" y2="43.5" stroke="#4a3820" stroke-width="1"/>
+          <path d="M44,53 Q50,57 56,53" stroke="#b08060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="42" y="63" width="16" height="11" rx="3" fill="#d4a882"/>
+          <path d="M8,130 Q8,88 50,82 Q92,88 92,130Z" fill="#b03a22"/>
+        </svg>
+      </div>
+      <div class="char-mini-info"><span class="char-tag tag-coral">Murcia</span><div class="char-mini-name">Elena, 44</div><div class="char-mini-sub">Trabajadora social · 12 años en el servicio</div></div>
+    </div>
+    <!-- Samba -->
+    <div class="char-mini">
+      <div class="char-mini-portrait" style="background:linear-gradient(160deg,#d8eaf6,#c0d8f0)">
+        <svg viewBox="0 0 100 130" width="70" height="91">
+          <ellipse cx="50" cy="44" rx="20" ry="22" fill="#6a4830"/>
+          <ellipse cx="50" cy="28" rx="20" ry="11" fill="#1a0a04"/>
+          <ellipse cx="32" cy="40" rx="5" ry="14" fill="#1a0a04"/>
+          <ellipse cx="68" cy="40" rx="5" ry="14" fill="#1a0a04"/>
+          <ellipse cx="50" cy="46" rx="17" ry="19" fill="#6a4830"/>
+          <ellipse cx="42" cy="42" rx="3.5" ry="3.5" fill="#100804"/><ellipse cx="58" cy="42" rx="3.5" ry="3.5" fill="#100804"/>
+          <ellipse cx="41" cy="41" rx="1" ry="1" fill="white"/><ellipse cx="57" cy="41" rx="1" ry="1" fill="white"/>
+          <path d="M44,52 Q50,57 56,52" stroke="#4a2c18" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <rect x="42" y="62" width="16" height="11" rx="3" fill="#6a4830"/>
+          <path d="M8,130 Q8,88 50,82 Q92,88 92,130Z" fill="#1a5f8a"/>
+        </svg>
+      </div>
+      <div class="char-mini-info"><span class="char-tag tag-sky">Senegal/Murcia</span><div class="char-mini-name">Samba, 16</div><div class="char-mini-sub">Menor tutelado · Hermano de Amara</div></div>
+    </div>
+    <!-- Rodrigo -->
+    <div class="char-mini">
+      <div class="char-mini-portrait" style="background:linear-gradient(160deg,#fce8e8,#f8d4d4)">
+        <svg viewBox="0 0 100 130" width="70" height="91">
+          <ellipse cx="50" cy="44" rx="22" ry="24" fill="#e0a888"/>
+          <ellipse cx="50" cy="27" rx="22" ry="13" fill="#c0a090"/>
+          <ellipse cx="30" cy="40" rx="6" ry="16" fill="#c0a090"/>
+          <ellipse cx="70" cy="40" rx="6" ry="16" fill="#c0a090"/>
+          <ellipse cx="50" cy="46" rx="18" ry="20" fill="#e0a888"/>
+          <ellipse cx="42" cy="43" rx="2.5" ry="2" fill="#3a2a20"/><ellipse cx="58" cy="43" rx="2.5" ry="2" fill="#3a2a20"/>
+          <path d="M44,55 Q50,58 56,55" stroke="#b07050" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- phone in hand suggestion -->
+          <rect x="58" y="66" width="10" height="16" rx="2" fill="#333" opacity=".6"/>
+          <rect x="59" y="67" width="8" height="12" rx="1" fill="#1877f2" opacity=".8"/>
+          <rect x="42" y="63" width="14" height="10" rx="3" fill="#e0a888"/>
+          <path d="M8,130 Q8,88 50,82 Q92,88 92,130Z" fill="#8a1a1a"/>
+        </svg>
+      </div>
+      <div class="char-mini-info"><span class="char-tag tag-red">Murcia</span><div class="char-mini-name">Rodrigo, 47</div><div class="char-mini-sub">Polarizador · Comparte bulos en redes</div></div>
+    </div>
+    <!-- Familia Gómez -->
+    <div class="char-mini">
+      <div class="char-mini-portrait" style="background:linear-gradient(160deg,#ede8f8,#ddd4f4)">
+        <svg viewBox="0 0 100 130" width="70" height="91">
+          <!-- two figures -->
+          <ellipse cx="36" cy="46" rx="16" ry="18" fill="#c06038"/>
+          <ellipse cx="36" cy="32" rx="16" ry="10" fill="#3a1a08"/>
+          <ellipse cx="23" cy="42" rx="4" ry="12" fill="#3a1a08"/>
+          <ellipse cx="49" cy="42" rx="4" ry="12" fill="#3a1a08"/>
+          <ellipse cx="36" cy="47" rx="13" ry="15" fill="#c06038"/>
+          <ellipse cx="30" cy="44" rx="2.2" ry="1.8" fill="#1a0800"/><ellipse cx="42" cy="44" rx="2.2" ry="1.8" fill="#1a0800"/>
+          <path d="M32,53 Q36,56 40,53" stroke="#8a3818" stroke-width="1.2" fill="none"/>
+          <!-- child small -->
+          <ellipse cx="68" cy="56" rx="10" ry="12" fill="#c87848"/>
+          <ellipse cx="68" cy="47" rx="11" ry="7" fill="#2a1004"/>
+          <ellipse cx="68" cy="57" rx="8" ry="10" fill="#c87848"/>
+          <ellipse cx="64" cy="54" rx="1.8" ry="1.5" fill="#1a0800"/><ellipse cx="72" cy="54" rx="1.8" ry="1.5" fill="#1a0800"/>
+          <path d="M5,130 Q5,88 36,82 Q68,88 95,130Z" fill="#5c3d8f"/>
+        </svg>
+      </div>
+      <div class="char-mini-info"><span class="char-tag tag-purple">Colombia</span><div class="char-mini-name">Familia Gómez</div><div class="char-mini-sub">Sin papeles · 2 adultos + 1 niño</div></div>
+    </div>
+  </div>
+  <button class="nbtn" onclick="go('s2')">Empezar con Amara →</button>
+</div>
+</div>
+
+<!-- ══ S2: AMARA DECISIÓN ══ -->
+<div class="scene" id="s2">
+<div class="wrap">
+  <div class="act-tag">Acto 1 · Amara</div>
+  <div class="sc-title">El dilema del primer mes</div>
+  <div class="char-full">
+    <div class="char-portrait" style="background:linear-gradient(160deg,#c8e8df,#ddf0e8)">
+      <svg viewBox="0 0 140 200" width="140" height="200">
+        <ellipse cx="70" cy="70" rx="34" ry="36" fill="#8B6348"/>
+        <ellipse cx="70" cy="45" rx="35" ry="22" fill="#2d1a0e"/>
+        <ellipse cx="44" cy="62" rx="9" ry="26" fill="#2d1a0e"/>
+        <ellipse cx="96" cy="62" rx="9" ry="26" fill="#2d1a0e"/>
+        <ellipse cx="70" cy="72" rx="28" ry="30" fill="#8B6348"/>
+        <ellipse cx="59" cy="66" rx="4.5" ry="4" fill="#1a0e06"/><ellipse cx="81" cy="66" rx="4.5" ry="4" fill="#1a0e06"/>
+        <ellipse cx="58" cy="65" rx="1.3" ry="1" fill="white"/><ellipse cx="80" cy="65" rx="1.3" ry="1" fill="white"/>
+        <ellipse cx="70" cy="76" rx="3" ry="2.5" fill="#6b4530"/>
+        <path d="M62,83 Q70,89 78,83" stroke="#6b4530" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <rect x="61" y="98" width="18" height="16" rx="4" fill="#8B6348"/>
+        <path d="M10,200 Q10,135 70,128 Q130,135 130,200Z" fill="#0d6b52"/>
+        <path d="M52,132 L70,148 L88,132" stroke="white" stroke-width="2" fill="none" opacity=".4"/>
+      </svg>
+    </div>
+    <div class="char-info">
+      <span class="char-tag tag-teal">Amara · 31 años</span>
+      <div class="char-name-big">Ingeniera sin papeles</div>
+      <div class="char-origin">Dakar, Senegal → Murcia</div>
+      <div class="char-bio">Grado en ingeniería agrícola. 8 meses en España. Permiso de residencia en trámite — válido para residir, pero sin autorización laboral todavía.<br><br><em>"Tengo 180 euros y el alquiler vence el día 1."</em></div>
+    </div>
+  </div>
+  <p class="body">Amara lleva tres semanas buscando trabajo. <strong>Paco Martínez</strong>, un agricultor de la zona con 40 hectáreas de pimiento, le ofrece trabajo en negro: pago inmediato, sin contrato. El centro de empleo municipal le ofrece iniciar el arraigo laboral — pero puede tardar 4 meses más.</p>
+  <div class="data-box">
+    <span class="db-stat">35%</span>
+    <span class="db-text">de trabajadores migrantes en España trabajan en situación irregular durante su primer año. El arraigo laboral requiere 6 meses de permanencia acreditada y oferta de empleo firmada.</span>
+    <span class="db-src">OIT 2023 · Instrucción SEM 2/2023</span>
+  </div>
+  <div class="quote-box">
+    <div class="qmark">"</div>
+    <div><div class="q-who">Amara piensa</div><div class="q-text">Mi casera me da hasta el 1 del mes. Tengo 180 euros en el bolsillo. Si espero cuatro meses, ¿de qué como?</div></div>
+  </div>
+  <div class="q-label">¿Qué hace Amara?</div>
+  <div class="choices">
+    <button class="cbtn" onclick="pick('amara','negro')"><span class="ct">Acepta el trabajo en negro con Paco</span><span class="cd">Dinero inmediato. Sin contrato, sin derechos laborales.</span></button>
+    <button class="cbtn" onclick="pick('amara','legal')"><span class="ct">Espera el arraigo laboral</span><span class="cd">Proceso legal. 4 meses de incertidumbre económica. Derechos plenos al final.</span></button>
+  </div>
+</div>
+</div>
+
+<!-- ══ S3: RESULTADO AMARA ══ -->
+<div class="scene" id="s3">
+<div class="wrap">
+  <div class="act-tag">Acto 1 · Resultado de Amara</div>
+  <div class="sc-title" id="s3-title"></div>
+  <div class="fb-card" id="s3-fb"></div>
+  <div class="no-ve-box"><div class="no-ve-label">Lo que el sistema no ve</div><div class="no-ve-text" id="s3-nove"></div></div>
+  <hr class="divider">
+  <div class="dilem-title">El patrón detrás de la decisión de Amara</div>
+  <div class="dilem-intro">La elección de Amara depende de lo que haga el empleador — en este caso, Paco. Estas son las cuatro combinaciones posibles:</div>
+  <div class="dilem" id="d-amara"></div>
+  <div class="dilem-tw" id="d-amara-tw"></div>
+  <button class="nbtn" onclick="go('s4')">Ahora: la decisión de Paco →</button>
+</div>
+</div>
+
+<!-- ══ S4: PACO ══ -->
+<div class="scene" id="s4">
+<div class="wrap">
+  <div class="act-tag">Acto 1 · Paco</div>
+  <div class="sc-title">Lo que Paco tiene que decidir</div>
+  <div class="char-full">
+    <div class="char-portrait" style="background:linear-gradient(160deg,#faefd8,#f0e0b0)">
+      <svg viewBox="0 0 140 200" width="140" height="200">
+        <ellipse cx="70" cy="70" rx="34" ry="36" fill="#c8906a"/>
+        <ellipse cx="70" cy="44" rx="35" ry="16" fill="#7a7870"/>
+        <ellipse cx="42" cy="58" rx="8" ry="20" fill="#7a7870"/>
+        <ellipse cx="98" cy="58" rx="8" ry="20" fill="#7a7870"/>
+        <ellipse cx="70" cy="70" rx="28" ry="30" fill="#c8906a"/>
+        <ellipse cx="70" cy="78" rx="9" ry="4" fill="#6a6460"/>
+        <ellipse cx="59" cy="65" rx="4" ry="3.5" fill="#3d2b1a"/><ellipse cx="81" cy="65" rx="4" ry="3.5" fill="#3d2b1a"/>
+        <rect x="38" y="36" width="64" height="7" rx="3.5" fill="#8a6030"/>
+        <rect x="30" y="34" width="80" height="5" rx="2.5" fill="#7a5020"/>
+        <rect x="61" y="98" width="18" height="16" rx="4" fill="#c8906a"/>
+        <path d="M10,200 Q10,135 70,128 Q130,135 130,200Z" fill="#5a7a40"/>
+      </svg>
+    </div>
+    <div class="char-info">
+      <span class="char-tag tag-amber">Paco · 58 años</span>
+      <div class="char-name-big">El agricultor</div>
+      <div class="char-origin">Murcia, segunda generación</div>
+      <div class="char-bio">40 hectáreas de pimiento y tomate. Necesita cuadrilla para la cosecha. Sus opiniones sobre inmigración cambian según quien le habla.<br><br><em>"El papeleo me mata. Pero tampoco quiero problemas."</em></div>
+    </div>
+  </div>
+  <p class="body">Paco ha oído muchas cosas sobre inmigración — que "quitan puestos de trabajo", que "no pagan impuestos", que "sin ellos la agricultura colapsa". Un vecino le dice que "contratar en regla es ruinoso". Su hija le dice lo contrario. Hoy tiene que decidir qué hace con Amara.</p>
+  <div class="no-ve-box"><div class="no-ve-label">Lo que Paco no ve</div><div class="no-ve-text">Que la persona que contrate vive en una situación de vulnerabilidad legal que hace que no pueda reclamar si algo va mal. El poder está completamente de su lado. Su decisión determina si Amara tiene derechos o no.</div></div>
+  <div class="data-box data-box-amber">
+    <span class="db-stat">340.000</span>
+    <span class="db-text">trabajadores migrantes en agricultura española (2023). En Murcia, el 62% de jornaleros son extranjeros. La economía sumergida agrícola representa el 22% del sector.</span>
+    <span class="db-src">MAPA · EPA 2023</span>
+  </div>
+  <div class="q-label">¿Qué hace Paco?</div>
+  <div class="choices">
+    <button class="cbtn" onclick="pick('paco','contrato')"><span class="ct">Contrata a Amara con contrato</span><span class="cd">Más papeleo y coste de Seguridad Social. Trabajador con derechos plenos.</span></button>
+    <button class="cbtn" onclick="pick('paco','negro')"><span class="ct">La contrata en negro, como siempre</span><span class="cd">Más rápido y barato a corto plazo. Perpetúa el ciclo.</span></button>
+  </div>
+</div>
+</div>
+
+<!-- ══ S5: RESULTADO PACO ══ -->
+<div class="scene" id="s5">
+<div class="wrap">
+  <div class="act-tag">Acto 1 · Resultado de Paco</div>
+  <div class="sc-title" id="s5-title"></div>
+  <div class="fb-card" id="s5-fb"></div>
+  <div class="no-ve-box"><div class="no-ve-label">Lo que produce el sistema</div><div class="no-ve-text" id="s5-nove"></div></div>
+  <hr class="divider">
+  <div class="dilem-title">Amara y Paco: el tablero completo</div>
+  <div class="dilem-intro">Ahora que conoces las dos decisiones, mira el tablero. <strong>Tu combinación está destacada.</strong></div>
+  <div class="dilem" id="d-paco"></div>
+  <div class="dilem-tw" id="d-paco-tw"></div>
+  <button class="nbtn" onclick="go('s6')">Acto 2: Rodrigo y la desinformación →</button>
+</div>
+</div>
+
+<!-- ══ S6: RODRIGO ══ -->
+<div class="scene" id="s6">
+<div class="wrap">
+  <div class="act-tag">Acto 2 · Rodrigo</div>
+  <div class="sc-title">El bulo que se comparte</div>
+  <div class="char-full">
+    <div class="char-portrait" style="background:linear-gradient(160deg,#fce8e8,#f8d4d4)">
+      <svg viewBox="0 0 140 200" width="140" height="200">
+        <ellipse cx="70" cy="70" rx="34" ry="36" fill="#e0a888"/>
+        <ellipse cx="70" cy="46" rx="34" ry="17" fill="#b09888"/>
+        <ellipse cx="44" cy="60" rx="8" ry="18" fill="#b09888"/>
+        <ellipse cx="96" cy="60" rx="8" ry="18" fill="#b09888"/>
+        <ellipse cx="70" cy="72" rx="28" ry="30" fill="#e0a888"/>
+        <ellipse cx="59" cy="66" rx="4" ry="3.5" fill="#2a1a10"/><ellipse cx="81" cy="66" rx="4" ry="3.5" fill="#2a1a10"/>
+        <ellipse cx="58.5" cy="65" rx="1" ry=".9" fill="white"/><ellipse cx="80.5" cy="65" rx="1" ry=".9" fill="white"/>
+        <path d="M63,80 Q70,84 77,80" stroke="#b07050" stroke-width="1.5" fill="none"/>
+        <!-- phone in hand -->
+        <rect x="82" y="98" width="18" height="28" rx="4" fill="#222"/>
+        <rect x="83.5" y="100" width="15" height="22" rx="2" fill="#1877f2"/>
+        <rect x="61" y="98" width="16" height="14" rx="4" fill="#e0a888"/>
+        <path d="M10,200 Q10,135 70,128 Q130,135 130,200Z" fill="#8a1a1a"/>
+        <path d="M52,132 L70,144 L88,132" stroke="rgba(255,255,255,.4)" stroke-width="2" fill="none"/>
+      </svg>
+    </div>
+    <div class="char-info">
+      <span class="char-tag tag-red">Rodrigo · 47 años</span>
+      <div class="char-name-big">El polarizador</div>
+      <div class="char-origin">Murcia · Empleado de almacén</div>
+      <div class="char-bio">Perdió un turno de trabajo que fue a un trabajador migrante. Desde entonces sigue páginas de noticias de dudosa veracidad y comparte contenido a diario. No es mal hombre — está asustado y desinformado.<br><br><em>"Solo digo lo que todo el mundo piensa."</em></div>
+    </div>
+  </div>
+  <p class="body">Rodrigo acaba de ver un vídeo en Facebook que asegura que "los migrantes cobran más en ayudas que un español cotizando toda la vida". Lo comparte sin verificarlo. En 24 horas lo han visto 3.400 personas del municipio.</p>
+
+  <div class="fake-post">
+    <div class="fake-post-header">
+      <div class="fake-post-avatar">👤</div>
+      <div class="fake-post-name">Rodrigo Sánchez · Murcia</div>
+    </div>
+    <div class="fake-post-body">
+      <div class="fake-post-text">🚨 VERGÜENZA NACIONAL: Un inmigrante ilegal recibe 1.200€ al mes en ayudas mientras mi madre cobra 680€ de pensión. ¡COMPARTE ANTES DE QUE LO BORREN! Los políticos no quieren que sepas esto.</div>
+      <div class="fake-post-img">📊 "Infografía" con datos sin fuente</div>
+      <div class="fake-post-stats">👍 847 · 💬 312 comentarios · 🔄 1.203 compartidos</div>
+      <div class="fact-check">
+        <div class="fc-label">✗ Verificación de datos</div>
+        <div class="fc-text">Falso. No existe ninguna ayuda de 1.200€ para migrantes sin papeles. Las personas en situación irregular <strong>no tienen acceso a prestaciones económicas</strong> del sistema de Seguridad Social. El bono social de energía, la RMV y las ayudas de vivienda requieren residencia legal acreditada.</div>
+        <div class="fc-src">Fuente: Ministerio de Inclusión · Seguridad Social 2024 · Maldita.es</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="data-box data-box-red">
+    <span class="db-stat">64%</span>
+    <span class="db-text">de los españoles sobreestima el porcentaje de inmigrantes en el país (media percibida: 26%; real: 15,4%). La desinformación en redes es el principal factor que explica esta brecha.</span>
+    <span class="db-src">Ipsos Perils of Perception 2023 · INE 2023</span>
+  </div>
+
+  <div class="q-label">Tú eres amigo de Rodrigo en Facebook. ¿Qué haces?</div>
+  <div class="choices">
+    <button class="cbtn" onclick="pick('rodrigo','responde')"><span class="ct">Le respondes con datos reales y el link de verificación</span><span class="cd">Incómodo. Puede funcionar — o puede que se enfade y lo comparta más.</span></button>
+    <button class="cbtn" onclick="pick('rodrigo','ignora')"><span class="ct">Lo ignoras y sigues con tu día</span><span class="cd">Sin conflicto. El bulo sigue circulando.</span></button>
+    <button class="cbtn" onclick="pick('rodrigo','reporta')"><span class="ct">Lo reportas a Facebook como desinformación</span><span class="cd">El sistema tardará días en actuar, si lo hace.</span></button>
+  </div>
+</div>
+</div>
+
+<!-- ══ S7: RESULTADO RODRIGO ══ -->
+<div class="scene" id="s7">
+<div class="wrap">
+  <div class="act-tag">Acto 2 · Resultado</div>
+  <div class="sc-title" id="s7-title"></div>
+  <div class="fb-card" id="s7-fb"></div>
+  <div class="no-ve-box"><div class="no-ve-label">Lo que Rodrigo no ve</div><div class="no-ve-text" id="s7-nove"></div></div>
+  <hr class="divider">
+  <div class="dilem-title">El dilema de la desinformación</div>
+  <div class="dilem-intro">La desinformación crea un entorno en el que las decisiones de integración se vuelven más difíciles para todos.</div>
+  <div class="dilem">
+    <div class="dc"><div class="dc-lbl">Comunidad bien informada + políticas activas</div><div class="dc-val c-g">Integración posible</div><div class="dc-sub">La opinión pública apoya medidas reales. El ciclo virtuoso puede arrancar.</div></div>
+    <div class="dc"><div class="dc-lbl">Bulos sin respuesta + indiferencia</div><div class="dc-val c-r">Polarización</div><div class="dc-sub">El miedo se normaliza. Las políticas de integración se vuelven políticamente imposibles.</div></div>
+    <div class="dc"><div class="dc-lbl">Respuesta individual + sin políticas</div><div class="dc-val c-n">Erosión lenta</div><div class="dc-sub">Los hechos luchan contra las emociones. Impacto limitado sin cambio estructural.</div></div>
+    <div class="dc"><div class="dc-lbl">Miedo + economía sumergida</div><div class="dc-val c-red">Círculo vicioso</div><div class="dc-sub">La narrativa del "coste" justifica la exclusión que produce más exclusión.</div></div>
+  </div>
+  <div class="dilem-tw"><strong>La desinformación no solo cambia opiniones — cambia las condiciones en las que se toman decisiones.</strong> Cuando Paco decide si contratar con contrato, lo hace en un entorno social moldeado por lo que ha leído. Rodrigo y Paco nunca se conocen, pero sus acciones se condicionan mutuamente.</div>
+  <button class="nbtn" onclick="go('s8')">Acto 3: la familia Gómez →</button>
+</div>
+</div>
+
+<!-- ══ S8: FAMILIA GÓMEZ ══ -->
+<div class="scene" id="s8">
+<div class="wrap">
+  <div class="act-tag">Acto 3 · Familia Gómez</div>
+  <div class="sc-title">Sin papeles, con hijos</div>
+  <div class="char-full">
+    <div class="char-portrait" style="background:linear-gradient(160deg,#ede8f8,#ddd4f4)">
+      <svg viewBox="0 0 140 200" width="140" height="200">
+        <!-- madre -->
+        <ellipse cx="48" cy="72" rx="24" ry="26" fill="#c06038"/>
+        <ellipse cx="48" cy="50" rx="25" ry="15" fill="#3a1a08"/>
+        <ellipse cx="28" cy="64" rx="7" ry="20" fill="#3a1a08"/>
+        <ellipse cx="68" cy="64" rx="7" ry="20" fill="#3a1a08"/>
+        <ellipse cx="48" cy="74" rx="20" ry="22" fill="#c06038"/>
+        <ellipse cx="40" cy="70" rx="3" ry="2.5" fill="#1a0800"/><ellipse cx="56" cy="70" rx="3" ry="2.5" fill="#1a0800"/>
+        <path d="M42,80 Q48,85 54,80" stroke="#8a3818" stroke-width="1.5" fill="none"/>
+        <rect x="40" y="96" width="16" height="13" rx="4" fill="#c06038"/>
+        <path d="M8,200 Q8,140 48,132 Q88,140 88,200Z" fill="#7a3888"/>
+        <!-- child -->
+        <ellipse cx="100" cy="88" rx="16" ry="18" fill="#c87848"/>
+        <ellipse cx="100" cy="74" rx="17" ry="10" fill="#2a1004"/>
+        <ellipse cx="86" cy="83" rx="5" ry="13" fill="#2a1004"/>
+        <ellipse cx="114" cy="83" rx="5" ry="13" fill="#2a1004"/>
+        <ellipse cx="100" cy="90" rx="13" ry="14" fill="#c87848"/>
+        <ellipse cx="94" cy="86" rx="2.5" ry="2" fill="#1a0800"/><ellipse cx="106" cy="86" rx="2.5" ry="2" fill="#1a0800"/>
+        <path d="M95,96 Q100,100 105,96" stroke="#904828" stroke-width="1.5" fill="none"/>
+        <rect x="92" y="102" width="16" height="12" rx="3" fill="#c87848"/>
+        <path d="M80,200 Q80,148 100,142 Q120,148 128,200Z" fill="#4a2880"/>
+      </svg>
+    </div>
+    <div class="char-info">
+      <span class="char-tag tag-purple">Familia Gómez</span>
+      <div class="char-name-big">Carmen, Héctor y Mateo</div>
+      <div class="char-origin">Cali, Colombia → Murcia · 14 meses</div>
+      <div class="char-bio">Carmen (38) y Héctor (41) llegaron huyendo de una amenaza de extorsión. Su hijo Mateo tiene 9 años y va al colegio. Llevan 14 meses sin papeles. Carmen limpia casas, Héctor trabaja en obras. Ninguno tiene contrato.<br><br><em>"Mateo no sabe que somos irregulares. No queremos que tenga miedo."</em></div>
+    </div>
+  </div>
+  <p class="body">Mateo enferma. Tiene apendicitis y necesita una operación urgente. Carmen y Héctor saben que en urgencias los atenderán — la ley lo garantiza — pero tienen miedo de que les pidan documentación y acaben deportados.</p>
+  <div class="data-box data-box-coral">
+    <span class="db-stat">547.000</span>
+    <span class="db-text">personas en situación irregular estimadas en España (2023). El 38% llevan más de 3 años — muchos con arraigo real pero sin vía legal clara. Los menores hijos de irregulares tienen derecho a sanidad y educación sin condiciones.</span>
+    <span class="db-src">Min. Interior 2023 · Ley Orgánica 4/2000</span>
+  </div>
+  <div class="quote-box">
+    <div class="qmark">"</div>
+    <div><div class="q-who">Carmen, en el parking del hospital</div><div class="q-text">Si entramos y nos preguntan papeles, ¿qué le decimos a Mateo cuando nos lleven? ¿Que vuelve solo a casa?</div></div>
+  </div>
+  <div class="q-label">¿Qué decides por Carmen y Héctor?</div>
+  <div class="choices">
+    <button class="cbtn" onclick="pick('gomez','entran')"><span class="ct">Entran a urgencias con Mateo</span><span class="cd">La ley les ampara. Pero el miedo es real y fundado.</span></button>
+    <button class="cbtn" onclick="pick('gomez','buscan')"><span class="ct">Buscan una clínica privada y piden dinero prestado</span><span class="cd">Evitan el sistema público. Deuda que no pueden pagar.</span></button>
+  </div>
+</div>
+</div>
+
+<!-- ══ S9: RESULTADO GÓMEZ ══ -->
+<div class="scene" id="s9">
+<div class="wrap">
+  <div class="act-tag">Acto 3 · Resultado</div>
+  <div class="sc-title" id="s9-title"></div>
+  <div class="fb-card" id="s9-fb"></div>
+  <div class="no-ve-box"><div class="no-ve-label">Lo que el sistema no ve</div><div class="no-ve-text" id="s9-nove"></div></div>
+  <hr class="divider">
+  <div class="dilem-title">El dilema del acceso a servicios</div>
+  <div class="dilem-intro">Cuando las personas en situación irregular evitan los servicios públicos por miedo, todos pierden.</div>
+  <div class="dilem">
+    <div class="dc"><div class="dc-lbl">Acceden + sistema los atiende sin miedo</div><div class="dc-val c-g">Óptimo</div><div class="dc-sub">Salud garantizada. Integración posible. Relación de confianza con instituciones.</div></div>
+    <div class="dc"><div class="dc-lbl">Acceden + sistema los denuncia</div><div class="dc-val c-r">Ruptura total</div><div class="dc-sub">El miedo se confirma. Nadie en situación irregular volverá a confiar en el sistema.</div></div>
+    <div class="dc"><div class="dc-lbl">No acceden + sistema abierto</div><div class="dc-val c-n">Oportunidad perdida</div><div class="dc-sub">El miedo, aunque infundado, produce exclusión real. El sistema existe pero no llega.</div></div>
+    <div class="dc"><div class="dc-lbl">No acceden + sistema hostil</div><div class="dc-val c-red">Exclusión total</div><div class="dc-sub">Sin salud, sin integración, sin futuro. El coste social es enorme — e invisible.</div></div>
+  </div>
+  <div class="dilem-tw"><strong>El miedo a las instituciones tiene un coste mayor que el coste de atender a personas irregulares.</strong> Cada vez que alguien evita urgencias, una vacuna, o el colegio por miedo a ser deportado, el problema de salud o de integración se agrava — y el coste recae sobre todos.</div>
+  <button class="nbtn" onclick="go('s10')">Acto 4: Elena y Samba →</button>
+</div>
+</div>
+
+<!-- ══ S10: ELENA + SAMBA ══ -->
+<div class="scene" id="s10">
+<div class="wrap">
+  <div class="act-tag">Acto 4 · Elena y Samba</div>
+  <div class="sc-title">El vacío de los 18 años</div>
+  <div class="char-full">
+    <div class="char-portrait" style="background:linear-gradient(160deg,#d8eaf6,#c0d8f0)">
+      <svg viewBox="0 0 140 200" width="140" height="200">
+        <ellipse cx="70" cy="68" rx="32" ry="34" fill="#6a4830"/>
+        <ellipse cx="70" cy="44" rx="30" ry="16" fill="#1a0a04"/>
+        <ellipse cx="46" cy="58" rx="7" ry="20" fill="#1a0a04"/>
+        <ellipse cx="94" cy="58" rx="7" ry="20" fill="#1a0a04"/>
+        <ellipse cx="70" cy="70" rx="26" ry="28" fill="#6a4830"/>
+        <ellipse cx="59" cy="63" rx="5" ry="5" fill="#100804"/><ellipse cx="81" cy="63" rx="5" ry="5" fill="#100804"/>
+        <ellipse cx="57.5" cy="62" rx="1.5" ry="1.4" fill="white"/><ellipse cx="79.5" cy="62" rx="1.5" ry="1.4" fill="white"/>
+        <path d="M63,82 Q70,88 77,82" stroke="#4a2c18" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <rect x="62" y="96" width="16" height="14" rx="3" fill="#6a4830"/>
+        <path d="M12,200 Q12,134 70,126 Q128,134 128,200Z" fill="#1a5f8a"/>
+        <rect x="20" y="134" width="18" height="36" rx="6" fill="#144870" opacity=".7"/>
+        <path d="M29,134 Q29,120 38,120 Q47,120 47,134" stroke="#144870" stroke-width="3" fill="none" opacity=".7"/>
+      </svg>
+    </div>
+    <div class="char-info">
+      <span class="char-tag tag-sky">Samba · 16 años</span>
+      <div class="char-name-big">Menor tutelado</div>
+      <div class="char-origin">Senegal → Murcia, 3 meses</div>
+      <div class="char-bio">Hermano de Amara. Llegó solo, en patera. Bajo tutela de la Comunidad Autónoma. Asiste al instituto, saca buenas notas, quiere estudiar ingeniería. En 2 años cumple 18 — y el sistema de protección dejará de ampararle automáticamente.</div>
+    </div>
+  </div>
+  <p class="body">Elena, su trabajadora social, sabe lo que viene. Sin intervención activa, Samba cumplirá 18 sin permiso de trabajo — y caerá en el mismo ciclo que intenta evitar para Amara.</p>
+  <div class="data-box data-box-coral">
+    <span class="db-stat">7.248</span>
+    <span class="db-text">menores no acompañados tutelados en España en 2023. Solo el <strong>23%</strong> obtiene permiso de trabajo al cumplir 18 sin intervención activa. El 77% restante cae en un vacío legal de entre 6 y 18 meses.</span>
+    <span class="db-src">Ministerio de Derechos Sociales 2023 · Save the Children</span>
+  </div>
+  <div class="voice-cards">
+    <div class="voice"><div class="v-ava" style="background:var(--coral-l)">👩‍⚕️</div><div><div class="v-name">Elena, trabajadora social</div><div class="v-quote">"Samba es brillante. Pero el sistema no está pensado para que los menores tutelados tengan un plan a largo plazo. Si no hacemos algo ahora, con 18 cae en el vacío. Lo he visto cien veces."</div></div></div>
+  </div>
+  <div class="no-ve-box"><div class="no-ve-label">Lo que el sistema no ve</div><div class="no-ve-text">Que proteger a un menor hasta los 17 años y 364 días, y soltarle sin papeles el día siguiente, es exactamente lo mismo que no haberle protegido. El coste de intervenir a tiempo es 3 veces menor que el de tratar la exclusión después (UNICEF 2022).</div></div>
+  <div class="q-label">¿Qué decide Elena?</div>
+  <div class="choices">
+    <button class="cbtn" onclick="pick('elena','activa')"><span class="ct">Inicia el proceso de permiso ahora, con 16</span><span class="cd">Lento y burocrático. Requiere coordinación entre administraciones. Preventivo.</span></button>
+    <button class="cbtn" onclick="pick('elena','espera')"><span class="ct">Espera a que cumpla 18</span><span class="cd">La práctica habitual. Alta probabilidad de vacío legal de 6 a 18 meses.</span></button>
+  </div>
+</div>
+</div>
+
+<!-- ══ S11: RESULTADO ELENA ══ -->
+<div class="scene" id="s11">
+<div class="wrap">
+  <div class="act-tag">Acto 4 · Resultado de Elena</div>
+  <div class="sc-title" id="s11-title"></div>
+  <div class="fb-card" id="s11-fb"></div>
+  <div class="no-ve-box"><div class="no-ve-label">Lo que produce el sistema</div><div class="no-ve-text" id="s11-nove"></div></div>
+  <hr class="divider">
+  <div class="dilem-title">El dilema de Elena y Samba</div>
+  <div class="dilem-intro">Este dilema es solo entre el sistema y la persona — no entre dos individuos.</div>
+  <div class="dilem">
+    <div class="dc"><div class="dc-lbl">Elena actúa + sistema responde</div><div class="dc-val c-g">Samba tiene futuro</div><div class="dc-sub">Integración real. Continuidad educativa. Un joven que contribuye al sistema.</div></div>
+    <div class="dc"><div class="dc-lbl">Elena actúa + sistema no responde</div><div class="dc-val c-n">Esfuerzo individual</div><div class="dc-sub">La voluntad de Elena choca contra la burocracia. Puede funcionar — o no.</div></div>
+    <div class="dc"><div class="dc-lbl">Elena no actúa + sistema tiene recursos</div><div class="dc-val c-r">Oportunidad perdida</div><div class="dc-sub">El sistema existe pero no llega. El vacío se produce por falta de coordinación.</div></div>
+    <div class="dc"><div class="dc-lbl">Nadie actúa</div><div class="dc-val c-red">Exclusión garantizada</div><div class="dc-sub">Samba a los 18: sin papeles, sin trabajo, sin estudios. El ciclo se reinicia.</div></div>
+  </div>
+  <div class="dilem-tw"><strong>La clave no es la voluntad de Elena — es el diseño del sistema.</strong> Cambiar las reglas para que la transición a la mayoría de edad sea automática y planificada costaría menos que gestionar la exclusión posterior.</div>
+  <button class="nbtn" onclick="go('s12')">Acto 5: construye tu comunidad →</button>
+</div>
+</div>
+
+<!-- ══ S12: SIMULACIÓN ══ -->
+<div class="scene" id="s12">
+<div class="wrap">
+  <div class="act-tag">Acto 5 · La simulación</div>
+  <div class="sc-title">Construye tu comunidad</div>
+  <p class="body muted">Ajusta la composición de la comunidad y las políticas activas. Los iconos muestran en tiempo real cómo cambia el estado de las personas.</p>
+
+  <div class="sliders">
+    <div class="sl-row"><label>Vecinos acogedores</label><input type="range" min="0" max="100" value="40" id="sl-a" oninput="su()"><span class="sl-val" id="va">40%</span></div>
+    <div class="sl-row"><label>Vecinos indiferentes</label><input type="range" min="0" max="100" value="35" id="sl-i" oninput="su()"><span class="sl-val" id="vi">35%</span></div>
+    <div class="sl-row"><label>Políticas de integración</label><input type="range" min="0" max="100" value="30" id="sl-p" oninput="su()"><span class="sl-val" id="vp">30%</span></div>
+    <div class="sl-row"><label>Acceso a regularización</label><input type="range" min="0" max="100" value="25" id="sl-r" oninput="su()"><span class="sl-val" id="vr">25%</span></div>
+  </div>
+
+  <!-- ISOTYPE GRID -->
+  <div class="iso-legend">
+    <div class="iso-legend-item"><div class="iso-legend-swatch" style="background:#0d6b52"></div>Integrada</div>
+    <div class="iso-legend-item"><div class="iso-legend-swatch" style="background:#b8720f"></div>En proceso</div>
+    <div class="iso-legend-item"><div class="iso-legend-swatch" style="background:#b03a22"></div>Excluida</div>
+    <div class="iso-legend-item"><div class="iso-legend-swatch" style="background:#aaa"></div>Indiferente</div>
+  </div>
+
+  <div class="iso-section">
+    <div class="iso-label">Personas migrantes — <span class="iso-count" id="iso-integ-n">0</span> integradas de 60</div>
+    <div class="iso-grid" id="iso-migrants"></div>
+  </div>
+  <div class="iso-section">
+    <div class="iso-label">Comunidad local — actitud hacia la integración</div>
+    <div class="iso-grid" id="iso-locals"></div>
+  </div>
+
+  <!-- GAUGES -->
+  <div class="gauges" id="gauges">
+    <div class="gauge-card">
+      <div class="gauge-val" id="g-integ" style="color:#0d6b52">—</div>
+      <div class="gauge-label">integración social</div>
+      <div class="gauge-trend" id="g-integ-t"></div>
+      <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="g-integ-b" style="background:#0d6b52"></div></div>
+    </div>
+    <div class="gauge-card">
+      <div class="gauge-val" id="g-econ" style="color:#1a5f8a">—</div>
+      <div class="gauge-label">bienestar económico</div>
+      <div class="gauge-trend" id="g-econ-t"></div>
+      <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="g-econ-b" style="background:#1a5f8a"></div></div>
+    </div>
+    <div class="gauge-card">
+      <div class="gauge-val" id="g-tens" style="color:#b03a22">—</div>
+      <div class="gauge-label">tensión social</div>
+      <div class="gauge-trend" id="g-tens-t"></div>
+      <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="g-tens-b" style="background:#b03a22"></div></div>
+    </div>
+  </div>
+
+  <div class="sim-note" id="sim-note"></div>
+  <button class="nbtn" onclick="go('s13')">Ver el desenlace →</button>
+</div>
+</div>
+
+<!-- ══ S13: FINAL ══ -->
+<div class="scene" id="s13">
+<div class="wrap">
+  <div class="act-tag">Desenlace</div>
+  <div class="sc-title">Lo que construiste</div>
+  <div class="verdict" id="verdict"></div>
+  <div class="ftable" id="ftable"></div>
+  <hr class="divider">
+  <p class="body muted">Las palancas reales que cambian el tablero en España:</p>
+  <div style="margin:.75rem 0 1.5rem">
+    <span class="pill pill-g">Arraigo laboral</span><span class="pill pill-g">RECORE 2024</span>
+    <span class="pill pill-g">Homologación títulos</span><span class="pill pill-g">Tutela + mayoría de edad</span>
+    <span class="pill pill-g">Sanidad universal efectiva</span>
+    <span class="pill pill-r">Economía sumergida agrícola</span><span class="pill pill-r">Retrasos NIE/TIE</span>
+    <span class="pill pill-r">Desinformación en redes</span>
+    <span class="pill pill-n">Cupos de trabajo temporal</span>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num">+2,5%</div><div class="stat-desc">PIB que se perdería sin migración laboral en España</div><div class="stat-src">Banco de España 2023</div></div>
+    <div class="stat-card"><div class="stat-num">1,4×</div><div class="stat-desc">más aportan los migrantes en cotizaciones de lo que reciben en prestaciones</div><div class="stat-src">IVIE 2022</div></div>
+  </div>
+  <div class="credits">
+    <strong>La Gran Travesía</strong> · Proyecto educativo inspirado en <em>The Evolution of Trust</em> de Nicky Case.<br>
+    Datos: INE · Banco de España · OIT · Min. Derechos Sociales · Save the Children · IVIE · MAPA · Maldita.es<br>
+    Libre para uso educativo y adaptación.
+  </div>
+</div>
+</div>
+
+<script>
+const S={amara:null,paco:null,rodrigo:null,gomez:null,elena:null};
+const ALL=['s-cover','s0','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13'];
+let prevM=null;
+
+function go(id){
+  document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  const isCover=id==='s-cover';
+  document.getElementById('hdr').style.display=isCover?'none':'flex';
+  const idx=ALL.indexOf(id);
+  const pw=document.getElementById('pips-wrap');
+  pw.innerHTML='';
+  const total=ALL.length-2;
+  for(let i=0;i<total;i++){
+    const d=document.createElement('div');
+    d.className='pip'+(i<idx-1?' done':i===idx-1?' now':'');
+    pw.appendChild(d);
+  }
+  const lbl=['','Datos','Personajes','Amara','→','Paco','→','Rodrigo','→','Familia','→','Elena','→','Simulación','Final'];
+  document.getElementById('pip-txt').textContent=lbl[idx]||'';
+  if(id==='s12')initSim();
+  if(id==='s13')buildFinal();
+}
+
+function fb(cls,icon,who,headline,body){
+  return `<div class="fb-head ${cls}"><span class="fb-icon">${icon}</span><div><div class="fb-who">${who}</div><div class="fb-headline">${headline}</div></div></div><div class="fb-body">${body}</div>`;
+}
+
+// DILEMMA: Amara solo (Paco unknown)
+function dilemAmara(amaraChoice){
+  const isN=amaraChoice==='negro';
+  return `
+    <div class="dc"><div class="dc-lbl">Amara espera + Paco contrata</div><div class="dc-val c-g">+++ Óptimo</div><div class="dc-sub">Integración real. Derechos. Cotizaciones. Beneficio mutuo.</div></div>
+    <div class="dc"><div class="dc-lbl">Amara espera + Paco en negro</div><div class="dc-val c-r">Amara pierde</div><div class="dc-sub">Sin contrato = sin poder reclamar. Vulnerabilidad total.</div></div>
+    <div class="dc"><div class="dc-lbl">Amara en negro + Paco contrata</div><div class="dc-val c-n">Mixto</div><div class="dc-sub">Paco quiso hacerlo bien, pero Amara ya está en la informalidad.</div></div>
+    <div class="dc"><div class="dc-lbl">Ambos en negro</div><div class="dc-val c-r">--- Todos pierden</div><div class="dc-sub">Sin derechos, sin datos, sin integración. El ciclo continúa.</div></div>`;
+}
+
+// DILEMMA: Amara + Paco (highlight user's combo)
+function dilemPaco(amara,paco){
+  const hl={
+    'legal_contrato':'AB','legal_negro':'AnB','negro_contrato':'nC','negro_negro':'nn'
+  }[amara+'_'+paco]||'';
+  const cells=[
+    {key:'AB',lbl:'Amara espera + Paco contrata',val:'+++ Óptimo',cls:'c-g',sub:'Integración real. Derechos. Cotizaciones.',hlCls:'hl'},
+    {key:'AnB',lbl:'Amara espera + Paco en negro',val:'Amara pierde',cls:'c-r',sub:'Sin contrato, sin poder reclamar. Vulnerabilidad total.',hlCls:'hl-r'},
+    {key:'nC',lbl:'Amara en negro + Paco contrata',val:'Mixto',cls:'c-n',sub:'Voluntad, pero sin salida del ciclo informal.',hlCls:'hl'},
+    {key:'nn',lbl:'Ambos en negro',val:'--- Todos pierden',cls:'c-r',sub:'Sin derechos, sin integración. El ciclo continúa.',hlCls:'hl-r'},
+  ];
+  return cells.map(c=>`<div class="dc${c.key===hl?' '+c.hlCls:''}"><div class="dc-lbl">${c.lbl}</div><div class="dc-val ${c.cls}">${c.val}</div><div class="dc-sub">${c.sub}</div></div>`).join('');
+}
+
+function pick(who,val){
+  S[who]=val;
+  if(who==='amara'){
+    const isN=val==='negro';
+    document.getElementById('s3-title').textContent=isN?'Atrapada en el ciclo':'El camino largo';
+    document.getElementById('s3-fb').innerHTML=isN
+      ?fb('fb-r','⚠️','Amara, semana 3','Acepta el trabajo en negro con Paco.','Tiene dinero para el alquiler. Pero cuando se lesiona la muñeca cargando cajas, <strong>no puede reclamar ni ir al médico sin miedo</strong>. Sin contrato, el proceso de regularización se complica: no puede acreditar arraigo laboral formal. Estará atrapada durante meses.')
+      :fb('fb-g','✓','Amara, mes 5','Obtiene el permiso de trabajo.','Son cuatro meses difíciles: pide prestado, come lo justo. Pero cuando llega el permiso, <strong>puede elegir empleadores, reclamar sus derechos y cotizar a la Seguridad Social</strong>. Incluso puede tramitar la homologación de su título de ingeniera.');
+    document.getElementById('s3-nove').textContent=isN
+      ?'Esta es la realidad del 35% de los migrantes en su primer año. No es una elección moral — es una trampa del sistema. Para tomar la decisión "correcta", Amara necesitaría ahorros que la mayoría de migrantes recién llegados no tienen.'
+      :'Solo el 28% de migrantes puede permitirse esperar al proceso legal sin trabajar. Amara tuvo la suerte de poder hacerlo. Para el 72% restante, esta opción no existe — es un privilegio disfrazado de elección.';
+    document.getElementById('d-amara').innerHTML=dilemAmara(val);
+    document.getElementById('d-amara-tw').innerHTML=isN
+      ?'<strong>Si Amara trabaja en negro</strong>, su vulnerabilidad es máxima independientemente de lo que haga Paco. La próxima decisión — la de Paco — determinará si esa vulnerabilidad se explota o no.'
+      :'<strong>Si Amara espera</strong>, ha hecho su parte. Ahora el resultado depende de si Paco — el empleador — coopera. Es el patrón clásico del dilema del prisionero: la mejor opción colectiva requiere que ambos confíen.';
+    go('s3');
+  } else if(who==='paco'){
+    const isC=val==='contrato';
+    document.getElementById('s5-title').textContent=isC?'Paco hace las cosas bien':'El camino fácil';
+    document.getElementById('s5-fb').innerHTML=isC
+      ?fb('fb-g','✓','Paco, temporada de cosecha','Contrata a Amara con contrato.','Más papeleo y coste inicial, pero <strong>Amara tiene derechos y puede reclamar si algo va mal</strong>. Los agricultores que contratan en regla tienen menos rotación y menos conflictos. A largo plazo, sale rentable — aunque pocos lo calculan así.')
+      :fb('fb-r','⚠️','Paco, temporada de cosecha','Contrata a Amara en negro.','Ahorra en cotizaciones. Pero <strong>Amara no tiene ninguna protección</strong>: si se lesiona, si no le pagan, si la explotan — no puede hacer nada. La economía sumergida agrícola cuesta al Estado 1.200 millones en cotizaciones no ingresadas al año.');
+    document.getElementById('s5-nove').textContent=isC
+      ?'Paco eligió bien. Pero si Amara ya estaba en la economía informal por su decisión anterior, el contrato no cambia su situación legal. Las decisiones se condicionan mutuamente — el orden importa.'
+      :'El 22% del sector agrícola opera así. Cuando la práctica está tan extendida, es difícil para un agricultor individual salir del ciclo: sus competidores no lo harán, y él perderá margen. Es otra trampa del sistema.';
+    document.getElementById('d-paco').innerHTML=dilemPaco(S.amara,val);
+    const combos={
+      'legal_contrato':'<strong>Vuestras dos decisiones se alinearon.</strong> Este es el escenario óptimo — el más difícil de conseguir sin reglas que lo faciliten. Existe en zonas con inspección de trabajo activa y acceso a regularización claro.',
+      'legal_negro':'<strong>Amara hizo su parte; Paco no.</strong> El resultado es el peor para Amara: sin contrato, su vulnerabilidad es total. Es el escenario más documentado de explotación laboral migrante.',
+      'negro_contrato':'<strong>Paco quiso hacerlo bien; Amara ya estaba en la informalidad.</strong> Situación mixta: hay voluntad pero el sistema no facilita la salida del ciclo informal.',
+      'negro_negro':'<strong>Ambos eligieron lo fácil.</strong> Economía sumergida, sin derechos, sin integración. Es el escenario más habitual en zonas agrícolas sin inspección activa.',
+    };
+    document.getElementById('d-paco-tw').innerHTML=combos[S.amara+'_'+val]||'';
+    go('s5');
+  } else if(who==='rodrigo'){
+    const opts={
+      responde:{t:'Rodrigo se enfada',fb:'fb-n',icon:'💬',who:'24 horas después',hl:'Le respondiste con datos. Rodrigo lo toma como un ataque y <strong>comparte el bulo de nuevo</strong> con el comentario "Censuran la verdad". Pero tres amigos en común ven tu respuesta y la guardan.',nove:'La respuesta individual tiene efecto limitado en bulos virales. Estudios de Stanford muestran que contradecir bulos con datos puede reforzarlos a corto plazo en personas con alta identificación política. Pero funciona a largo plazo en audiencias no comprometidas.'},
+      ignora:{t:'El bulo sigue circulando',fb:'fb-r',icon:'🔇',who:'Una semana después',hl:'El post de Rodrigo llega a 8.400 personas. <strong>Nadie lo cuestiona en público</strong>. Rodrigo sigue compartiendo. La narrativa de "los migrantes cobran más" se normaliza en el municipio.',nove:'La inacción también es una decisión. Cuando los bulos no encuentran resistencia, se convierten en "sentido común". El silencio de la mayoría permite que la minoría polarizada fije la agenda.'},
+      reporta:{t:'Facebook actúa (tarde)',fb:'fb-n',icon:'🚩',who:'5 días después',hl:'Facebook retira el post al quinto día. Ya tiene <strong>3.400 compartidos y 890 comentarios</strong>. Rodrigo publica otro similar al día siguiente. Sigue sin violar ninguna norma clara.',nove:'Los mecanismos de moderación de plataformas son reactivos y lentos. En España, la regulación europea DSA obliga a actuar más rápido ante contenido viral — pero la implementación es desigual y los bulos migran a otras plataformas.'},
+    };
+    const o=opts[val]||opts.ignora;
+    document.getElementById('s7-title').textContent=o.t;
+    document.getElementById('s7-fb').innerHTML=fb(o.fb,o.icon,o.who,o.hl.split('.')[0]+'.',o.hl);
+    document.getElementById('s7-nove').textContent=o.nove;
+    go('s7');
+  } else if(who==='gomez'){
+    const isE=val==='entran';
+    document.getElementById('s9-title').textContent=isE?'Mateo recibe atención':'Una deuda imposible';
+    document.getElementById('s9-fb').innerHTML=isE
+      ?fb('fb-g','✓','Familia Gómez, sala de espera','Entran. Les atienden sin pedir documentación.','Mateo es operado esa noche. <strong>Nadie les pregunta por papeles</strong>. La Ley Orgánica 4/2000 garantiza atención de urgencia sin condiciones. El miedo de Carmen era real — pero en este caso, infundado.')
+      :fb('fb-r','⚠️','Familia Gómez, clínica privada','Encuentran una clínica. La operación cuesta 4.200€.','Piden prestado a cuatro personas diferentes. <strong>Héctor tendrá que trabajar el doble durante un año</strong> para devolverlo. El sistema público existía y hubiera funcionado — pero el miedo los alejó de él.');
+    document.getElementById('s9-nove').textContent=isE
+      ?'En España, la urgencia vital está garantizada legalmente para cualquier persona, independientemente de su situación administrativa. Sin embargo, el 34% de personas en situación irregular evitan el sistema sanitario por miedo (Médicos del Mundo 2023). El miedo tiene un coste sanitario real.'
+      :'El coste de evitar el sistema público no lo paga solo la familia — lo paga toda la comunidad cuando los problemas de salud no tratados se agravan. El acceso real a la sanidad requiere no solo derechos legales, sino confianza institucional activamente construida.';
+    go('s9');
+  } else if(who==='elena'){
+    const isA=val==='activa';
+    document.getElementById('s11-title').textContent=isA?'Elena pelea por Samba':'El sistema falla a Samba';
+    document.getElementById('s11-fb').innerHTML=isA
+      ?fb('fb-g','✓','Elena y Samba, 18 meses después','Samba cumple 18 años con el permiso de trabajo tramitado.','El proceso requirió coordinación entre tres administraciones y tardó 6 meses. Pero <strong>Samba puede seguir estudiando y trabajar legalmente</strong>. Una persona en el sistema hizo la diferencia.')
+      :fb('fb-r','⚠️','Samba, al cumplir 18','Queda en vacío legal durante 9 meses.','Sin papeles, sin trabajo legal, sin poder matricularse. <strong>Es lo que les pasa al 77% de los menores tutelados</strong> al llegar a la mayoría de edad. El sistema los protege hasta los 18 — y luego los suelta sin red.');
+    document.getElementById('s11-nove').textContent=isA
+      ?'La intervención temprana funciona — pero depende de que haya una Elena dispuesta a luchar contra la burocracia. No todos los menores tienen esa suerte. La solución no puede ser que todo dependa de la dedicación individual de un trabajador social sobrecargado.'
+      :'Este vacío legal es la principal causa de entrada de jóvenes ex-tutelados en situaciones de exclusión. El coste de la intervención tardía es 3 veces mayor que el de la temprana (UNICEF 2022). No es un problema de recursos — es un problema de diseño del sistema.';
+    go('s11');
+  }
+}
+
+// ── SIMULATION ISOTYPE ──
+function personSVG(color){
+  return `<svg class="iso-person" viewBox="0 0 20 24" width="20" height="24">
+    <circle cx="10" cy="5" r="4" fill="${color}"/>
+    <path d="M3,24 Q3,13 10,11 Q17,13 17,24Z" fill="${color}"/>
+  </svg>`;
+}
+
+function calc(){
+  const a=+document.getElementById('sl-a').value;
+  const i=+document.getElementById('sl-i').value;
+  const p=+document.getElementById('sl-p').value;
+  const r=+document.getElementById('sl-r').value;
+  const h=Math.max(0,100-a-i);
+  const pB=S.amara==='legal'?13:0;
+  const pC=S.paco==='contrato'?10:0;
+  const eB=S.elena==='activa'?9:0;
+  const rB=S.rodrigo==='responde'?5:S.rodrigo==='reporta'?3:0;
+  const gB=S.gomez==='entran'?4:0;
+  const integ=Math.min(97,Math.round(.35*a+.2*p+.2*r+pB+pC+eB+rB+gB+.03*i));
+  const econ=Math.min(97,Math.round(.25*(a+i)*.5+.3*p+.2*r+pC*1.2+pB*.8+gB*.5));
+  const tens=Math.max(1,Math.round(.45*h+.15*(100-p)+.1*(100-r)-a*.08-rB*.4));
+  return{integ,econ,tens,h,a,i};
+}
+
+function renderIso(m){
+  const mig=document.getElementById('iso-migrants');
+  const loc=document.getElementById('iso-locals');
+  const total=60;
+  const integN=Math.round(total*m.integ/100);
+  const processN=Math.round(total*(m.econ/100)*0.3);
+  const excludeN=total-integN-processN;
+  document.getElementById('iso-integ-n').textContent=integN;
+  let mHtml='';
+  for(let i=0;i<total;i++){
+    const c=i<integN?'#0d6b52':i<integN+processN?'#b8720f':'#b03a22';
+    mHtml+=personSVG(c);
+  }
+  mig.innerHTML=mHtml;
+  const ltotal=50;
+  const acogN=Math.round(ltotal*m.a/100);
+  const indN=Math.round(ltotal*m.i/100);
+  const hosN=ltotal-acogN-indN;
+  let lHtml='';
+  for(let i=0;i<ltotal;i++){
+    const c=i<acogN?'#0d6b52':i<acogN+indN?'#aaa':'#b03a22';
+    lHtml+=personSVG(c);
+  }
+  loc.innerHTML=lHtml;
+}
+
+function renderGauges(m){
+  const prev=prevM||m;
+  const trend=(cur,prv)=>cur>prv?'↑ subiendo':cur<prv?'↓ bajando':'→ estable';
+  document.getElementById('g-integ').textContent=m.integ+'%';
+  document.getElementById('g-integ-b').style.width=m.integ+'%';
+  document.getElementById('g-integ-t').textContent=trend(m.integ,prev.integ);
+  document.getElementById('g-integ-t').style.color=m.integ>=prev.integ?'#0d6b52':'#b03a22';
+  document.getElementById('g-econ').textContent=m.econ+'%';
+  document.getElementById('g-econ-b').style.width=m.econ+'%';
+  document.getElementById('g-econ-t').textContent=trend(m.econ,prev.econ);
+  document.getElementById('g-econ-t').style.color=m.econ>=prev.econ?'#0d6b52':'#b03a22';
+  document.getElementById('g-tens').textContent=m.tens+'%';
+  document.getElementById('g-tens-b').style.width=m.tens+'%';
+  document.getElementById('g-tens-t').textContent=trend(m.tens,prev.tens);
+  document.getElementById('g-tens-t').style.color=m.tens<=prev.tens?'#0d6b52':'#b03a22';
+  prevM=m;
+}
+
+function renderNote(m){
+  let t='';
+  if(m.integ>70&&m.tens<25)t='Comunidad con integración avanzada. Las políticas activas y la acogida se refuerzan mutuamente — es el resultado de ciudades como Mataró o Vic que apostaron por la integración sostenida.';
+  else if(m.tens>60)t='Alta polarización. Sin políticas activas, los conflictos cristalizan en narrativas de rechazo que hacen políticamente difícil cualquier medida de integración.';
+  else if(m.econ>60&&m.integ<35)t='Paradoja documentada: la economía se beneficia de la migración pero la integración social es baja. Es el modelo de explotación sin integración — habitual en zonas agrícolas intensivas.';
+  else t='Equilibrio inestable. Pequeños cambios en políticas pueden mover la comunidad hacia la integración o la exclusión — el punto de inflexión es más cercano de lo que parece.';
+  document.getElementById('sim-note').textContent=t;
+}
+
+function su(){
+  document.getElementById('va').textContent=document.getElementById('sl-a').value+'%';
+  document.getElementById('vi').textContent=document.getElementById('sl-i').value+'%';
+  document.getElementById('vp').textContent=document.getElementById('sl-p').value+'%';
+  document.getElementById('vr').textContent=document.getElementById('sl-r').value+'%';
+  const m=calc();
+  renderIso(m);renderGauges(m);renderNote(m);
+}
+function initSim(){prevM=null;su();}
+
+// ── FINAL ──
+function buildFinal(){
+  const m=calc();
+  const score=m.integ+m.econ-m.tens*.4;
+  let vt,vb;
+  if(score>130){vt='Una comunidad de integración avanzada';vb='Las decisiones individuales y las políticas se alinearon. Amara tiene derechos, Samba tiene futuro, la familia Gómez accedió al sistema, y la desinformación encontró resistencia. Este escenario existe — en comunidades que apostaron por la integración con inversión pública real y sostenida.';}
+  else if(score>90){vt='Una comunidad en equilibrio frágil';vb='Funciona, pero con tensiones latentes. Con más políticas activas el equilibrio sería más estable. Es el escenario más frecuente en la España actual: avances reales, pero sin la masa crítica institucional para consolidarlos.';}
+  else if(score>60){vt='Una comunidad con exclusión moderada';vb='El sistema no facilitó las decisiones correctas. Hay personas que quieren integrarse, pero las reglas del juego no lo permiten. El ciclo de la economía sumergida y la desconfianza continúa.';}
+  else{vt='Una comunidad polarizada';vb='La falta de políticas y la desinformación se reforzaron mutuamente. Este escenario tiene precedentes históricos — y también tiene solución, pero requiere voluntad política sostenida durante años, no meses.';}
+  document.getElementById('verdict').innerHTML=`<div class="vt">${vt}</div><div class="vb">${vb}</div>`;
+  const dR={responde:'Respondiste con datos',ignora:'Lo ignoraste',reporta:'Lo reportaste a la plataforma'};
+  const dG={entran:'Entraron a urgencias',buscan:'Buscaron clínica privada'};
+  document.getElementById('ftable').innerHTML=`
+    <div class="frow"><span class="fk">Amara</span><span class="fv">${S.amara==='legal'?'Esperó el arraigo':'Trabajó en negro'}</span></div>
+    <div class="frow"><span class="fk">Paco</span><span class="fv">${S.paco==='contrato'?'Contrató con contrato':'Contrató en negro'}</span></div>
+    <div class="frow"><span class="fk">Rodrigo (tú)</span><span class="fv">${dR[S.rodrigo]||'—'}</span></div>
+    <div class="frow"><span class="fk">Familia Gómez</span><span class="fv">${dG[S.gomez]||'—'}</span></div>
+    <div class="frow"><span class="fk">Elena</span><span class="fv">${S.elena==='activa'?'Actuó con 16 años':'Esperó a los 18'}</span></div>
+    <div class="frow"><span class="fk">Integración final</span><span class="fv">${m.integ}%</span></div>
+    <div class="frow"><span class="fk">Bienestar económico</span><span class="fv">${m.econ}%</span></div>
+    <div class="frow"><span class="fk">Tensión social</span><span class="fv">${m.tens}%</span></div>`;
+}
+</script>
+</body>
+</html>
